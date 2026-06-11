@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreetFood — Админ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+    <div class="nav-inner">
+        <div class="nav-logo" onclick="window.location='index.html'">
+            <span class="logo-icon">🔥</span>
+            <span class="logo-text">StreetFood</span>
+            <span class="admin-label">Админ</span>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="window.location='index.html'" title="На сайт">🏠</button>
+        </div>
+    </div>
+</nav>
+
+<main id="app">
+
+    <!-- ВХОД -->
+    <section id="admin-login" class="page active">
+        <div class="login-card">
+            <h2>🔐 Вход в админ-панель</h2>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="admin-password" placeholder="Введите пароль"
+                       onkeypress="if(event.key==='Enter') adminLogin()">
+            </div>
+            <button class="btn btn-primary btn-lg" onclick="adminLogin()">Войти</button>
+        </div>
+    </section>
+
+    <!-- ПАНЕЛЬ -->
+    <section id="admin-panel" class="page">
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
+                📋 Заказы <span id="orders-count" class="tab-badge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="menu" onclick="switchTab('menu')">
+                🍽️ Меню <span id="menu-count" class="tab-badge">0</span>
+            </button>
+        </div>
+
+        <!-- ЗАКАЗЫ -->
+        <div id="tab-orders" class="tab-content active">
+            <div class="admin-toolbar">
+                <h3>Заказы</h3>
+                <select id="order-filter" onchange="loadOrders()">
+                    <option value="all">Все</option>
+                    <option value="Новый">Новые</option>
+                    <option value="Готовится">Готовится</option>
+                    <option value="В пути">В пути</option>
+                    <option value="Доставлен">Доставлен</option>
+                    <option value="Самовывоз">Самовывоз</option>
+                    <option value="Отменён">Отменён</option>
+                </select>
+            </div>
+            <div id="orders-list" class="orders-list"></div>
+        </div>
+
+        <!-- МЕНЮ -->
+        <div id="tab-menu" class="tab-content">
+            <div class="admin-toolbar">
+                <h3>Позиции меню</h3>
+                <button class="btn btn-primary btn-sm" onclick="showAddForm()">+ Добавить блюдо</button>
+            </div>
+
+            <div id="add-form" class="add-form" style="display:none">
+                <h4 id="form-title">Новое блюдо</h4>
+                <input type="hidden" id="edit-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Категория</label>
+                        <select id="f-category">
+                            <option value="Бургеры">🍔 Бургеры</option>
+                            <option value="Шаурма">🌯 Шаурма</option>
+                            <option value="Пицца">🍕 Пицца</option>
+                            <option value="Шашлык">🍢 Шашлык</option>
+                            <option value="Хот-доги">🌭 Хот-доги</option>
+                            <option value="Гарниры">🍟 Гарниры</option>
+                            <option value="Салаты">🥗 Салаты</option>
+                            <option value="Напитки">🥤 Напитки</option>
+                            <option value="Десерты">🍰 Десерты</option>
+                            <option value="Соусы">🫙 Соусы</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Эмодзи</label>
+                        <input type="text" id="f-emoji" placeholder="🍔" maxlength="4">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Название</label>
+                        <input type="text" id="f-name" placeholder="Чизбургер">
+                    </div>
+                    <div class="form-group">
+                        <label>Цена (₽)</label>
+                        <input type="number" id="f-price" placeholder="250">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Описание <span class="optional">(необязательно)</span></label>
+                    <textarea id="f-desc" rows="2" placeholder="Сочная котлета, свежие овощи, фирменный соус"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Вес / объём <span class="optional">(необязательно)</span></label>
+                    <input type="text" id="f-weight" placeholder="350 г, 0.5 л">
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="saveItem()">Сохранить</button>
+                    <button class="btn btn-secondary" onclick="hideAddForm()">Отмена</button>
+                </div>
+            </div>
+
+            <div class="admin-toolbar" style="margin-top:16px">
+                <select id="menu-filter" onchange="loadMenu()">
+                    <option value="all">Все категории</option>
+                </select>
+            </div>
+
+            <div id="menu-list" class="products-admin-grid"></div>
+        </div>
+
+    </section>
+</main>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>
